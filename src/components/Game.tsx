@@ -1,14 +1,16 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { PublicHome } from "@/lib/homes";
 import { loadHistory, playerId, saveDayPlay } from "@/lib/client/storage";
-import { HOMES_PER_DAY, TIER_EMOJI } from "@/lib/scoring";
-import type { DayPlay, Guess } from "@/lib/stats";
+import { HOMES_PER_DAY } from "@/lib/scoring";
+import { computeStats, type DayPlay, type Guess } from "@/lib/stats";
+import Hud from "./Hud";
 import MapPanel from "./MapPanel";
 import Photos from "./Photos";
 import PriceInput from "./PriceInput";
 import Result from "./Result";
 import RevealSequence, { type Reveal } from "./RevealSequence";
+import StartScreen from "./StartScreen";
 
 type Daily = { day: string; dayNumber: number; homes: PublicHome[] };
 
@@ -25,6 +27,11 @@ export default function Game() {
   const [busy, setBusy] = useState(false);
   /** Set when the last reveal is dismissed, so the result screen celebrates once (not on every revisit). */
   const [justFinished, setJustFinished] = useState(false);
+  /** Past the start screen. */
+  const [started, setStarted] = useState(false);
+  /** The "Home 3 of 5" card shown between homes (index of the next home), or null. */
+  const [between, setBetween] = useState<number | null>(null);
+  const betweenTimer = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     fetch("/api/daily")
@@ -45,8 +52,20 @@ export default function Game() {
       <Result day={daily.day} dayNumber={daily.dayNumber} homes={daily.homes} play={play} justFinished={justFinished} />
     );
 
+  if (!started)
+    return (
+      <StartScreen
+        dayNumber={daily.dayNumber}
+        streak={computeStats(loadHistory(), daily.day).currentStreak}
+        resumeAt={play.guesses.length}
+        onPlay={() => setStarted(true)}
+      />
+    );
+
   const index = reveal ? play.guesses.length - 1 : play.guesses.length;
   const home = daily.homes[index];
+  const shownGuesses = play.guesses.filter((_, i) => i < index || revealed);
+  const score = shownGuesses.reduce((sum, g) => sum + g.points, 0);
 
   const lockIn = async () => {
     setBusy(true);
@@ -78,6 +97,11 @@ export default function Game() {
 
   const next = () => {
     if (play.guesses.length >= HOMES_PER_DAY) setJustFinished(true);
+    else {
+      setBetween(play.guesses.length);
+      clearTimeout(betweenTimer.current);
+      betweenTimer.current = window.setTimeout(() => setBetween(null), 900);
+    }
     setReveal(null);
     setGuess(START_GUESS);
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -85,22 +109,27 @@ export default function Game() {
 
   return (
     <div className="mx-auto grid max-w-xl gap-3 lg:max-w-none lg:grid-cols-[minmax(0,1fr)_380px] lg:grid-rows-[auto_auto_auto_1fr] lg:gap-x-6 lg:gap-y-4">
-      <div className="flex items-center justify-between text-sm font-medium text-muted lg:col-span-2">
-        <span>
-          #{daily.dayNumber} · Home {index + 1} of {HOMES_PER_DAY}
-        </span>
-        <span className="flex gap-1 text-base" aria-label="Progress">
-          {daily.homes.map((_, i) => (
-            <span key={i}>
-              {play.guesses[i] && (i < index || revealed)
-                ? TIER_EMOJI[play.guesses[i].tier]
-                : i === index
-                  ? "🏠"
-                  : "⬜"}
-            </span>
-          ))}
-        </span>
+      <div className="lg:col-span-2">
+        <Hud dayNumber={daily.dayNumber} tiers={shownGuesses.map((g) => g.tier)} current={index} score={score} />
       </div>
+
+      {between !== null && (
+        <button
+          className="fixed inset-0 z-40 grid place-items-center overflow-hidden bg-[#1c0f52]/40 backdrop-blur-[2px]"
+          onClick={() => setBetween(null)}
+          aria-label="Continue"
+          data-testid="between"
+        >
+          <div className="interstitial stage px-10 py-6 text-center">
+            <p className="font-display text-sm tracking-[0.25em] text-gold">NEXT UP</p>
+            <p className="font-display text-5xl text-white drop-shadow-[0_4px_0_rgba(0,0,0,0.35)]">
+              Home {between + 1}
+              <span className="text-2xl text-white/70"> of {HOMES_PER_DAY}</span>
+            </p>
+            <p className="mt-1 font-semibold text-white/90">📍 {daily.homes[between].stateName}</p>
+          </div>
+        </button>
+      )}
 
       <div className="lg:col-start-2 lg:row-start-2">
         <MapPanel home={home} />
@@ -129,7 +158,7 @@ export default function Game() {
             <button
               onClick={lockIn}
               disabled={busy}
-              className="mt-3 w-full rounded-xl bg-brand py-3.5 text-lg font-extrabold text-brand-ink shadow-[0_4px_0_#b5401b] transition active:translate-y-0.5 active:shadow-[0_2px_0_#b5401b] disabled:opacity-60"
+              className="btn-toy mt-3 w-full bg-brand py-3.5 text-xl text-brand-ink"
             >
               {busy ? "Checking…" : "Lock in guess"}
             </button>
