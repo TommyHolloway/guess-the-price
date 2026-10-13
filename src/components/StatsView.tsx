@@ -37,18 +37,18 @@ export default function StatsView() {
 
   return (
     <div className="mx-auto max-w-xl space-y-4">
-      <h1 className="text-2xl font-extrabold">Your stats</h1>
+      <h1 className="font-display text-4xl text-white drop-shadow-[0_4px_0_rgba(0,0,0,0.35)]">Your stats</h1>
       <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
         {tiles.map(([label, v]) => (
-          <div key={label} className="rounded-xl border border-line bg-card p-3 text-center">
-            <div className="text-2xl font-extrabold tabular-nums">{v}</div>
+          <div key={label} className="panel p-3 text-center">
+            <div className="font-display text-3xl tabular-nums">{v}</div>
             <div className="text-xs text-muted">{label}</div>
           </div>
         ))}
       </div>
 
-      <section className="rounded-2xl border border-line bg-card p-4">
-        <h2 className="font-bold">Score distribution</h2>
+      <section className="panel p-4">
+        <h2 className="font-display text-xl">Score distribution</h2>
         <div className="mt-2 space-y-1.5">
           {stats.distribution.map((n, i) => (
             <div key={i} className="flex items-center gap-2 text-sm">
@@ -60,8 +60,8 @@ export default function StatsView() {
         </div>
       </section>
 
-      <section className="rounded-2xl border border-line bg-card p-4">
-        <h2 className="font-bold">Accuracy</h2>
+      <section className="panel p-4">
+        <h2 className="font-display text-xl">Accuracy</h2>
         <p className="mt-1 text-sm text-muted">
           {totalGuesses
             ? `${TIER_EMOJI.green} ${stats.tiers.green} within 5% · ${TIER_EMOJI.yellow} ${stats.tiers.yellow} within 15% · ${TIER_EMOJI.red} ${stats.tiers.red} further off`

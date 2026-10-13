@@ -10,7 +10,7 @@ export default function Photos({ photos, alt }: { photos: string[]; alt: string 
     if (s) s.scrollTo({ left: i * s.clientWidth, behavior: "smooth" });
   };
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-line bg-card">
+    <div className="relative overflow-hidden rounded-[20px] border-[3px] border-white bg-card shadow-[0_6px_0_rgb(0_0_0/0.35)]">
       <div
         ref={strip}
         className="no-scrollbar flex aspect-[3/2] snap-x lg:aspect-[4/3] snap-mandatory overflow-x-auto"

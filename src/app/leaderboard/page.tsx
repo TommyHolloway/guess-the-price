@@ -16,14 +16,14 @@ export default async function LeaderboardPage({ searchParams }: { searchParams: 
 
   return (
     <div className="mx-auto max-w-xl space-y-4">
-      <h1 className="text-2xl font-extrabold">
-        Leaderboard <span className="text-base font-medium text-muted">#{dayNumber(day)}</span>
+      <h1 className="font-display text-4xl text-white drop-shadow-[0_4px_0_rgba(0,0,0,0.35)]">
+        Leaderboard <span className="text-lg text-gold">#{dayNumber(day)}</span>
       </h1>
       <form className="flex gap-2" action="/leaderboard">
         <select
           name="state"
           defaultValue={state ?? ""}
-          className="flex-1 rounded-lg border border-line bg-card px-2 py-2"
+          className="flex-1 rounded-xl border-[3px] border-white bg-card px-2 py-2"
         >
           <option value="">🇺🇸 National</option>
           {Object.entries(STATES).map(([code, s]) => (
@@ -32,9 +32,9 @@ export default async function LeaderboardPage({ searchParams }: { searchParams: 
             </option>
           ))}
         </select>
-        <button className="rounded-lg bg-ink px-4 font-bold text-white">Show</button>
+        <button className="btn-toy bg-brand px-5 text-white">Show</button>
       </form>
-      <ol className="divide-y divide-line rounded-2xl border border-line bg-card">
+      <ol className="panel divide-y divide-line overflow-hidden">
         {rows.length === 0 && (
           <li className="p-4 text-center text-sm text-muted">
             No scores yet{state ? ` in ${STATES[state].name}` : ""} today.{" "}
@@ -46,12 +46,14 @@ export default async function LeaderboardPage({ searchParams }: { searchParams: 
         )}
         {rows.map((r, i) => (
           <li key={`${r.playerId}`} className="flex items-center gap-3 px-4 py-2.5">
-            <span className="w-6 text-right font-bold text-muted tabular-nums">{i + 1}</span>
+            <span className="font-display w-7 text-center text-lg text-muted tabular-nums">
+              {i < 3 ? ["🥇", "🥈", "🥉"][i] : i + 1}
+            </span>
             <span className="flex-1 truncate font-medium">
               {r.name ?? "Anonymous"} {r.state && <span className="text-xs text-muted">{r.state}</span>}
             </span>
             <span className="text-sm">{r.tiers.map((t) => TIER_EMOJI[t]).join("")}</span>
-            <span className="w-10 text-right font-extrabold tabular-nums">{r.score}</span>
+            <span className="font-display w-12 text-right text-xl tabular-nums">{r.score}</span>
           </li>
         ))}
       </ol>

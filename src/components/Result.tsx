@@ -45,7 +45,7 @@ export default function Result({
 
   return (
     <div className="mx-auto grid max-w-xl gap-4 lg:max-w-5xl lg:grid-cols-2 lg:items-start" data-testid="final">
-      <div className="space-y-4">
+      <div className="min-w-0 space-y-4">
         <section className="result-card relative px-5 pt-6 pb-6 text-center" data-testid="result-card">
           {justFinished && (milestone || rank.min >= 300) && <Confetti seed={`final:${day}`} count={60} />}
           <p className="font-display text-sm tracking-[0.2em] text-gold">GUESS THE PRICE #{dayNumber}</p>
@@ -85,7 +85,7 @@ export default function Result({
         </section>
       </div>
 
-      <div className="space-y-4">
+      <div className="min-w-0 space-y-4">
         <section className="card p-4">
           <h2 className="font-display text-xl">Today&apos;s homes</h2>
           <ol className="mt-2 space-y-2">
@@ -114,7 +114,7 @@ export default function Result({
 
         <PostScore day={day} guesses={dayPlay.guesses.map((g) => g.guess)} />
 
-        <p className="text-center text-sm text-muted">
+        <p className="text-center text-sm text-white/75">
           New homes in <Countdown /> ·{" "}
           <Link href="/stats" className="underline">
             Your stats

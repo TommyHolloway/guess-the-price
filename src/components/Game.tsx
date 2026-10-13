@@ -43,8 +43,11 @@ export default function Game() {
       .catch(() => setError("Couldn't load today's homes. Try again in a moment."));
   }, []);
 
-  if (error) return <p className="mt-10 text-center text-muted">{error}</p>;
-  if (!daily || !play) return <p className="mt-10 text-center text-muted">Loading today&apos;s homes…</p>;
+  if (error) return <p className="mt-10 text-center text-white/80">{error}</p>;
+  if (!daily || !play)
+    return (
+      <p className="font-display mt-16 animate-pulse text-center text-2xl text-white/80">Loading today&apos;s homes…</p>
+    );
 
   const done = play.guesses.length >= HOMES_PER_DAY;
   if (done && !reveal)
@@ -184,7 +187,7 @@ function BottomSheet({ children }: { children: React.ReactNode }) {
       <div className="md:hidden" style={{ height }} aria-hidden />
       <section
         ref={setEl}
-        className="pb-safe fixed inset-x-0 bottom-0 z-20 rounded-t-3xl border-t border-line bg-card/95 px-4 pt-4 shadow-[0_-8px_30px_rgb(0_0_0/0.08)] backdrop-blur md:static md:rounded-2xl md:border md:bg-card md:p-5 md:shadow-sm md:backdrop-blur-none lg:col-start-2 lg:row-start-4 lg:self-start"
+        className="pb-safe fixed inset-x-0 bottom-0 z-20 rounded-t-[28px] border-t-4 border-gold bg-card px-4 pt-4 shadow-[0_-10px_30px_rgb(0_0_0/0.35)] md:static md:rounded-[20px] md:border-[3px] md:border-white md:p-5 md:shadow-[0_6px_0_rgb(0_0_0/0.35)] lg:col-start-2 lg:row-start-4 lg:self-start"
       >
         <div className="mx-auto max-w-xl">{children}</div>
       </section>
@@ -200,11 +203,11 @@ function Facts({ home }: { home: PublicHome }) {
     [home.yearBuilt ?? "—", "built"],
   ] as const;
   return (
-    <div className="rounded-2xl border border-line bg-card px-3 py-2.5 lg:p-4">
+    <div className="panel px-3 py-2.5 lg:p-4">
       <div className="grid grid-cols-4 divide-x divide-line text-center">
         {items.map(([v, label]) => (
           <div key={label}>
-            <div className="text-base font-bold tabular-nums lg:text-xl">{v}</div>
+            <div className="font-display text-xl tabular-nums lg:text-2xl">{v}</div>
             <div className="text-[11px] tracking-wide text-muted uppercase">{label}</div>
           </div>
         ))}

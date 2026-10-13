@@ -105,7 +105,7 @@ export default function MapPanel({ home }: { home: PublicHome }) {
   }, [home.id, ready]);
 
   return (
-    <div className="relative h-32 overflow-hidden rounded-2xl border border-line bg-[#e8eef0] sm:h-44 lg:h-60">
+    <div className="relative h-32 overflow-hidden rounded-[20px] border-[3px] border-white bg-[#e8eef0] shadow-[0_6px_0_rgb(0_0_0/0.35)] sm:h-44 lg:h-60">
       <div ref={el} className="absolute inset-0" data-testid="map" />
       {failed && (
         <div className="absolute inset-0 grid place-items-center bg-[#e8eef0] text-sm text-muted">

@@ -26,16 +26,21 @@ export async function generateMetadata({ searchParams }: { searchParams: Search 
 export default async function SharedResult({ searchParams }: { searchParams: Search }) {
   const { d = "", g = "", t = "0" } = await searchParams;
   const tiers = decodeTiers(g);
+  const score = Math.min(MAX_SCORE, Number(t) || 0);
+  const rank = rankFor(score);
   return (
-    <div className="mx-auto mt-8 max-w-md rounded-2xl border border-line bg-card p-6 text-center">
-      <p className="text-sm text-muted">A friend scored{isDayKey(d) ? ` on #${dayNumber(d)}` : ""}</p>
-      <p className="text-6xl font-extrabold tabular-nums">
-        {Math.min(MAX_SCORE, Number(t) || 0)}
-        <span className="text-2xl text-muted">/{MAX_SCORE}</span>
+    <div className="result-card relative mx-auto mt-6 max-w-md px-6 pt-9 pb-9 text-center text-white">
+      <p className="font-display text-sm tracking-[0.2em] text-gold">
+        A FRIEND PLAYED{isDayKey(d) ? ` #${dayNumber(d)}` : ""}
       </p>
-      <p className="mt-2 text-3xl">{tiers.map((x) => TIER_EMOJI[x]).join("")}</p>
-      <p className="mt-4">Five homes that sold this month. Guess their prices.</p>
-      <Link href="/" className="mt-5 block rounded-xl bg-brand py-3 text-lg font-extrabold text-brand-ink">
+      <div className="mt-2 text-6xl" aria-hidden>
+        {rank.emoji}
+      </div>
+      <h1 className="font-display text-5xl drop-shadow-[0_4px_0_rgba(0,0,0,0.35)]">{rank.title}</h1>
+      <p className="font-display mt-1 text-4xl text-gold">{score} pts</p>
+      <p className="mt-3 text-3xl tracking-widest">{tiers.map((x) => TIER_EMOJI[x]).join("")}</p>
+      <p className="mt-4 text-white/85">5 homes that just sold. Guess their prices. Can you beat it?</p>
+      <Link href="/" className="btn-toy font-display mt-5 block bg-brand py-4 text-2xl text-white">
         Play today&apos;s homes
       </Link>
     </div>

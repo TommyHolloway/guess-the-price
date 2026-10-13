@@ -7,7 +7,7 @@ export default function AdSlot({ id }: { id: string }) {
   return (
     <div
       data-ad-slot={id}
-      className="mt-4 grid h-24 place-items-center rounded-xl border border-dashed border-line text-xs text-muted"
+      className="mt-4 grid h-24 place-items-center rounded-xl border border-dashed border-white/30 text-xs text-white/60"
     >
       Ad
     </div>

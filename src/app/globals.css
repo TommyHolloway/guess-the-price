@@ -2,12 +2,14 @@
 @import "maplibre-gl/dist/maplibre-gl.css";
 
 :root {
-  --bg: #fff8ec;
-  --card: #ffffff;
-  --ink: #1d1a16;
-  --muted: #6b5d4c;
-  --line: #eadfcd;
-  --brand: #e2572b;
+  /* Game-show stage. --stage is the page; --card the cream panels on it (ink text). */
+  --stage: #1c0f52;
+  --bg: #f6ead0;
+  --card: #fff6e0;
+  --ink: #1b1240;
+  --muted: #6b5f86;
+  --line: #e6d7b8;
+  --brand: #ff5a36;
   --brand-ink: #ffffff;
   --green: #22a35a;
   --yellow: #e8b500;
@@ -17,6 +19,7 @@
 }
 
 @theme inline {
+  --color-stage: var(--stage);
   --color-bg: var(--bg);
   --color-card: var(--card);
   --color-ink: var(--ink);
@@ -32,7 +35,11 @@
 }
 
 body {
-  background: var(--bg);
+  background:
+    radial-gradient(ellipse 90% 60% at 50% -10%, rgb(124 77 255 / 0.55), transparent 70%),
+    repeating-conic-gradient(from 0deg at 50% -20%, rgb(255 255 255 / 0.035) 0deg 6deg, transparent 6deg 12deg),
+    var(--stage);
+  background-attachment: fixed;
   color: var(--ink);
   font-family:
     ui-sans-serif,
@@ -55,7 +62,7 @@ input[type="range"].price-slider {
   appearance: none;
   height: 10px;
   border-radius: 999px;
-  background: linear-gradient(90deg, #ffd9b8, var(--brand));
+  background: linear-gradient(90deg, #ffe08a, var(--brand));
 }
 input[type="range"].price-slider::-webkit-slider-thumb {
   appearance: none;
@@ -280,10 +287,13 @@ select {
     background-position: 11px 0;
   }
 }
-.card {
+/* Cream panels framed in white with a hard shadow, like game-show boards. */
+.card,
+.panel {
   border-radius: 20px;
-  border: 1px solid var(--line);
+  border: 3px solid #fff;
   background: var(--card);
+  box-shadow: 0 6px 0 rgb(0 0 0 / 0.35);
 }
 @media (prefers-reduced-motion: reduce) {
   .result-card::before,

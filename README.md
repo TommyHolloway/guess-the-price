@@ -30,6 +30,15 @@ photos) and an **in-memory store** (leaderboards reset with the server).
   - `stats.ts` / `share.ts`: streaks, distribution, share text and links.
   - `data/`: `HomeSource` (sample now, Redfin later), `GameStore` (memory, or Supabase over PostgREST), and
     `getOrCreateDay`.
+- The game loop (`src/components/`): `StartScreen` (hero house and five face-down cards), `Hud` (score bar),
+  `RevealSequence` (suspense with "X% of players guessed higher", a drumroll on the first home and a quick one after,
+  the count-up on `PriceScale`, then stamp, confetti or shake; any tap skips) and `Result` (rank title from
+  `lib/rank.ts`, share actions with a preview of the link card, the score reel). Sounds are synthesised in
+  `lib/client/sound.ts` and muted until the player turns them on.
+- The crowd line needs 10 other guesses on a home (`lib/crowd.ts`). With sample homes, a seeded simulated crowd stands
+  in so it can be seen in development; real homes only ever use real guesses.
+- Look: a game-show stage (tokens in `globals.css`, the same colours in `lib/brand/theme.ts` for share images) with
+  Lilita One (`assets/fonts`, OFL) as the display face.
 - Prices and exact locations never reach the browser before the reveal: `/api/daily` sends public fields only,
   `/api/reveal` scores one guess, and `/api/score` re-scores the five guesses server-side before posting to the
   leaderboard.
