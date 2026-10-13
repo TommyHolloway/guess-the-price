@@ -80,23 +80,30 @@ export default function Game() {
   };
 
   return (
-    <div className="space-y-3">
-      <div className="flex items-center justify-between text-sm text-muted">
+    <div className="mx-auto grid max-w-xl gap-3 lg:max-w-none lg:grid-cols-[minmax(0,1fr)_380px] lg:grid-rows-[auto_auto_auto_1fr] lg:gap-x-6 lg:gap-y-4">
+      <div className="flex items-center justify-between text-sm font-medium text-muted lg:col-span-2">
         <span>
           #{daily.dayNumber} · Home {index + 1} of {HOMES_PER_DAY}
         </span>
-        <span className="flex gap-1" aria-label="Progress">
+        <span className="flex gap-1 text-base" aria-label="Progress">
           {daily.homes.map((_, i) => (
             <span key={i}>{play.guesses[i] ? TIER_EMOJI[play.guesses[i].tier] : i === index ? "🏠" : "⬜"}</span>
           ))}
         </span>
       </div>
 
-      <MapPanel home={home} />
-      <Photos photos={home.photos} alt={`Home in ${home.city}, ${home.state}`} />
-      <Facts home={home} />
+      <div className="lg:col-start-2 lg:row-start-2">
+        <MapPanel home={home} />
+      </div>
+      <div className="lg:col-start-1 lg:row-span-3 lg:row-start-2">
+        <Photos photos={home.photos} alt={`Home in ${home.city}, ${home.state}`} />
+      </div>
+      <div className="lg:col-start-2 lg:row-start-3">
+        <Facts home={home} />
+      </div>
 
-      <section className="rounded-2xl border border-line bg-card p-4">
+      {/* Phones: a bottom sheet that is always on screen. Tablets: inline. Desktop: the last card in the right column. */}
+      <BottomSheet>
         {reveal ? (
           <RevealCard reveal={reveal} last={index === HOMES_PER_DAY - 1} onNext={next} />
         ) : (
@@ -105,35 +112,58 @@ export default function Game() {
             <button
               onClick={lockIn}
               disabled={busy}
-              className="mt-4 w-full rounded-xl bg-brand py-3 text-lg font-extrabold text-brand-ink disabled:opacity-60"
+              className="mt-3 w-full rounded-xl bg-brand py-3.5 text-lg font-extrabold text-brand-ink shadow-[0_4px_0_#b5401b] transition active:translate-y-0.5 active:shadow-[0_2px_0_#b5401b] disabled:opacity-60"
             >
               {busy ? "Checking…" : "Lock in guess"}
             </button>
           </>
         )}
-      </section>
+      </BottomSheet>
     </div>
+  );
+}
+
+/** Fixed to the bottom on phones (with a spacer so content can scroll clear of it); inline on tablets and desktop. */
+function BottomSheet({ children }: { children: React.ReactNode }) {
+  const [height, setHeight] = useState(0);
+  const [el, setEl] = useState<HTMLElement | null>(null);
+  useEffect(() => {
+    if (!el) return;
+    const ro = new ResizeObserver(() => setHeight(el.offsetHeight));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [el]);
+  return (
+    <>
+      <div className="md:hidden" style={{ height }} aria-hidden />
+      <section
+        ref={setEl}
+        className="pb-safe fixed inset-x-0 bottom-0 z-20 rounded-t-3xl border-t border-line bg-card/95 px-4 pt-4 shadow-[0_-8px_30px_rgb(0_0_0/0.08)] backdrop-blur md:static md:rounded-2xl md:border md:bg-card md:p-5 md:shadow-sm md:backdrop-blur-none lg:col-start-2 lg:row-start-4 lg:self-start"
+      >
+        <div className="mx-auto max-w-xl">{children}</div>
+      </section>
+    </>
   );
 }
 
 function Facts({ home }: { home: PublicHome }) {
   const items = [
-    [home.beds, "beds"],
-    [home.baths, "baths"],
+    [home.beds, "bd"],
+    [home.baths, "ba"],
     [home.sqft.toLocaleString("en-US"), "sq ft"],
     [home.yearBuilt ?? "—", "built"],
   ] as const;
   return (
-    <div className="rounded-2xl border border-line bg-card p-3">
-      <div className="grid grid-cols-4 text-center">
+    <div className="rounded-2xl border border-line bg-card px-3 py-2.5 lg:p-4">
+      <div className="grid grid-cols-4 divide-x divide-line text-center">
         {items.map(([v, label]) => (
           <div key={label}>
-            <div className="text-lg font-bold">{v}</div>
-            <div className="text-xs text-muted">{label}</div>
+            <div className="text-base font-bold tabular-nums lg:text-xl">{v}</div>
+            <div className="text-[11px] tracking-wide text-muted uppercase">{label}</div>
           </div>
         ))}
       </div>
-      <p className="mt-2 text-center text-sm text-muted">
+      <p className="mt-1.5 text-center text-xs text-muted lg:mt-3 lg:text-sm">
         {home.propertyType === "condo" ? "Condo" : "Single-family home"} in {home.city}, {home.state}
       </p>
     </div>
@@ -144,16 +174,16 @@ function RevealCard({ reveal, last, onNext }: { reveal: Reveal; last: boolean; o
   const credit = reveal.host ?? reveal.listingAgent;
   return (
     <div className="text-center" data-testid="reveal">
-      <p className="text-sm text-muted">Sold for</p>
-      <p className="text-4xl font-extrabold tabular-nums">{formatFullPrice(reveal.price)}</p>
-      <p className="mt-1 text-sm text-muted">You guessed {formatFullPrice(reveal.guess)}</p>
-      <div className="mt-3 flex items-center justify-center gap-4">
+      <p className="text-xs font-semibold tracking-wide text-muted uppercase">Sold for</p>
+      <p className="animate-pop text-4xl font-extrabold tabular-nums">{formatFullPrice(reveal.price)}</p>
+      <p className="mt-0.5 text-sm text-muted">You guessed {formatFullPrice(reveal.guess)}</p>
+      <div className="mt-2 flex items-center justify-center gap-4">
         <span className={`text-2xl font-extrabold ${TIER_TEXT[reveal.tier]}`}>
           {TIER_EMOJI[reveal.tier]} {Math.round(reveal.pctError * 100)}% off
         </span>
         <span className="text-2xl font-extrabold">+{reveal.points}</span>
       </div>
-      <p className="mt-2 font-medium">{revealLine(reveal.guess, reveal.price)}</p>
+      <p className="mt-1 font-medium">{revealLine(reveal.guess, reveal.price)}</p>
       {credit && (
         <p className="mt-3 text-xs text-muted">
           {reveal.host ? "Today's host: " : "Listed by "}
@@ -161,7 +191,11 @@ function RevealCard({ reveal, last, onNext }: { reveal: Reveal; last: boolean; o
           {credit.brokerage ? `, ${credit.brokerage}` : ""}
         </p>
       )}
-      <button onClick={onNext} className="mt-4 w-full rounded-xl bg-ink py-3 text-lg font-extrabold text-white">
+      <button
+        onClick={onNext}
+        autoFocus
+        className="mt-3 w-full rounded-xl bg-ink py-3.5 text-lg font-extrabold text-white"
+      >
         {last ? "See your score" : "Next home →"}
       </button>
       <AdSlot id="reveal" />
@@ -174,7 +208,7 @@ function Final({ daily, play }: { daily: Daily; play: DayPlay }) {
   const stats = computeStats(loadHistory(), daily.day);
   const tiers = play.guesses.map((g) => g.tier);
   return (
-    <div className="space-y-4" data-testid="final">
+    <div className="mx-auto max-w-xl space-y-4" data-testid="final">
       <section className="rounded-2xl border border-line bg-card p-5 text-center">
         <p className="text-sm text-muted">Guess the Price #{daily.dayNumber}</p>
         <p className="text-6xl font-extrabold tabular-nums">

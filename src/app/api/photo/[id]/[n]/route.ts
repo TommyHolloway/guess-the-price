@@ -25,7 +25,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
            <rect x="520" y="110" width="180" height="180" fill="#e9f6ff" stroke="#fff" stroke-width="10"/>
            <rect x="120" y="340" width="300" height="110" rx="18" fill="${trim}"/>`;
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">${body}
-    <text x="24" y="580" font-family="system-ui,sans-serif" font-size="22" fill="rgba(0,0,0,.45)">Sample photo${
+    <rect x="16" y="76" width="${idx && rooms[idx] ? 290 : 170}" height="40" rx="20" fill="rgba(255,255,255,.75)"/><text x="34" y="104" font-family="system-ui,sans-serif" font-size="22" fill="rgba(0,0,0,.6)">Sample photo${
       rooms[idx] ? ` · ${rooms[idx]}` : ""
     }</text></svg>`;
   return new Response(svg, {

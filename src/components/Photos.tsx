@@ -13,7 +13,7 @@ export default function Photos({ photos, alt }: { photos: string[]; alt: string 
     <div className="relative overflow-hidden rounded-2xl border border-line bg-card">
       <div
         ref={strip}
-        className="no-scrollbar flex aspect-[4/3] snap-x snap-mandatory overflow-x-auto"
+        className="no-scrollbar flex aspect-[3/2] snap-x lg:aspect-[4/3] snap-mandatory overflow-x-auto"
         onScroll={(e) => setAt(Math.round(e.currentTarget.scrollLeft / e.currentTarget.clientWidth))}
       >
         {photos.map((src, i) => (

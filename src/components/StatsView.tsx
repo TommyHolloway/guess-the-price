@@ -36,7 +36,7 @@ export default function StatsView() {
   const totalGuesses = stats.tiers.green + stats.tiers.yellow + stats.tiers.red;
 
   return (
-    <div className="space-y-4">
+    <div className="mx-auto max-w-xl space-y-4">
       <h1 className="text-2xl font-extrabold">Your stats</h1>
       <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
         {tiles.map(([label, v]) => (

@@ -25,7 +25,7 @@ export default async function SharedResult({ searchParams }: { searchParams: Sea
   const { d = "", g = "", t = "0" } = await searchParams;
   const tiers = decodeTiers(g);
   return (
-    <div className="mt-8 rounded-2xl border border-line bg-card p-6 text-center">
+    <div className="mx-auto mt-8 max-w-md rounded-2xl border border-line bg-card p-6 text-center">
       <p className="text-sm text-muted">A friend scored{isDayKey(d) ? ` on #${dayNumber(d)}` : ""}</p>
       <p className="text-6xl font-extrabold tabular-nums">
         {Math.min(MAX_SCORE, Number(t) || 0)}

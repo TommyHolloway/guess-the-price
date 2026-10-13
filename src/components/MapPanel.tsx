@@ -104,14 +104,14 @@ export default function MapPanel({ home }: { home: PublicHome }) {
   }, [home.id, ready]);
 
   return (
-    <div className="relative h-52 overflow-hidden rounded-2xl border border-line bg-[#e8eef0] sm:h-64">
+    <div className="relative h-32 overflow-hidden rounded-2xl border border-line bg-[#e8eef0] sm:h-44 lg:h-60">
       <div ref={el} className="absolute inset-0" data-testid="map" />
       {failed && (
         <div className="absolute inset-0 grid place-items-center bg-[#e8eef0] text-sm text-muted">
           Somewhere in {home.city}, {home.state}
         </div>
       )}
-      <div className="pointer-events-none absolute top-2 left-2 rounded-full bg-white/90 px-3 py-1 text-sm font-semibold shadow">
+      <div className="pointer-events-none absolute top-2 left-2 rounded-full bg-white/90 px-3 py-1 text-sm font-semibold shadow-sm">
         📍 {home.city}, {home.stateName}
       </div>
       {ready && doneFor !== home.id && (

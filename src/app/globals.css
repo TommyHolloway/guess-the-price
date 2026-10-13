@@ -82,3 +82,52 @@ input[type="range"].price-slider::-moz-range-thumb {
   line-height: 32px;
   box-shadow: 0 2px 6px rgb(0 0 0 / 0.15);
 }
+
+/* App feel: no rubber-band page bounce or double-tap zoom, safe-area gutters for notches and home bars. */
+html,
+body {
+  overscroll-behavior-y: none;
+}
+button,
+a,
+input,
+select {
+  touch-action: manipulation;
+}
+.safe-x {
+  padding-left: max(16px, env(safe-area-inset-left));
+  padding-right: max(16px, env(safe-area-inset-right));
+}
+.pb-safe {
+  padding-bottom: max(14px, env(safe-area-inset-bottom));
+}
+@media (hover: hover) {
+  .arrow {
+    opacity: 0.85;
+  }
+  .arrow:hover {
+    opacity: 1;
+  }
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(0.85);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.06);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+.animate-pop {
+  animation: pop 0.35s ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-pop {
+    animation: none;
+  }
+}

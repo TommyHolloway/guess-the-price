@@ -13,7 +13,7 @@ export default function PriceInput({ value, onChange }: { value: number; onChang
       <div className="flex items-baseline justify-center gap-2">
         {typing === null ? (
           <button
-            className="text-4xl font-extrabold tabular-nums"
+            className="text-4xl font-extrabold tabular-nums lg:text-5xl"
             onClick={() => setTyping(String(value))}
             aria-label="Type a price"
             data-testid="price"
@@ -58,7 +58,7 @@ export default function PriceInput({ value, onChange }: { value: number; onChang
         step={0.001}
         value={priceToSlider(value)}
         onChange={(e) => onChange(sliderToPrice(Number(e.target.value)))}
-        className="price-slider mt-3 w-full"
+        className="price-slider mt-3 w-full cursor-pointer"
         aria-label="Your guess"
       />
       <div className="mt-1 flex justify-between text-xs text-muted">

@@ -15,7 +15,7 @@ export default async function LeaderboardPage({ searchParams }: { searchParams: 
   const rows = await gameStore().leaderboard(day, state);
 
   return (
-    <div className="space-y-4">
+    <div className="mx-auto max-w-xl space-y-4">
       <h1 className="text-2xl font-extrabold">
         Leaderboard <span className="text-base font-medium text-muted">#{dayNumber(day)}</span>
       </h1>
