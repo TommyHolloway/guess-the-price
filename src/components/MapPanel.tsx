@@ -37,8 +37,9 @@ export default function MapPanel({ home }: { home: PublicHome }) {
   useEffect(() => {
     let disposed = false;
     import("maplibre-gl")
-      .then(({ Map }) => {
+      .then(({ Map, setWorkerUrl }) => {
         if (disposed || !el.current) return;
+        setWorkerUrl("/maplibre-gl-worker.mjs");
         const m = new Map({ container: el.current, style: STYLE, ...US_VIEW, attributionControl: { compact: true } });
         m.on("error", (e) => {
           console.warn("map:", e.error?.message);

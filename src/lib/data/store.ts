@@ -1,4 +1,5 @@
 import type { Home } from "../homes";
+import type { Crowd } from "../crowd";
 import type { Tier } from "../scoring";
 
 /** A day's five homes, picked once and shared by every player. */
@@ -22,14 +23,23 @@ export interface GameStore {
   /** First submission per player per day wins. */
   submitScore(entry: ScoreEntry): Promise<void>;
   leaderboard(day: string, state?: string, limit?: number): Promise<ScoreEntry[]>;
+  /** Records a player's guess for one home (first one counts). */
+  recordGuess(day: string, index: number, playerId: string, guess: number): Promise<void>;
+  /** How many players guessed this home, and how many of them guessed above `guess`, leaving out `playerId`. */
+  crowd(day: string, index: number, guess: number, playerId: string): Promise<Crowd>;
 }
 
-type Mem = { days: Map<string, DailySet>; scores: Map<string, ScoreEntry> };
+type Mem = {
+  days: Map<string, DailySet>;
+  scores: Map<string, ScoreEntry>;
+  guesses: Map<string, Map<string, number>>;
+};
 const g = globalThis as unknown as { __gtpMem?: Mem };
 
 /** In-memory store for development: resets with the server. */
 export function memoryStore(): GameStore {
-  const mem = (g.__gtpMem ??= { days: new Map(), scores: new Map() });
+  const mem = (g.__gtpMem ??= { days: new Map(), scores: new Map(), guesses: new Map() });
+  mem.guesses ??= new Map();
   return {
     async getDay(day) {
       return mem.days.get(day) ?? null;
@@ -50,6 +60,18 @@ export function memoryStore(): GameStore {
         .filter((e) => e.day === day && (!state || e.state === state))
         .sort((a, b) => b.score - a.score)
         .slice(0, limit);
+    },
+    async recordGuess(day, index, playerId, guess) {
+      const key = `${day}:${index}`;
+      const m = mem.guesses.get(key) ?? new Map<string, number>();
+      if (!m.has(playerId)) m.set(playerId, guess);
+      mem.guesses.set(key, m);
+    },
+    async crowd(day, index, guess, playerId) {
+      const others = [...(mem.guesses.get(`${day}:${index}`) ?? new Map()).entries()]
+        .filter(([p]) => p !== playerId)
+        .map(([, g]) => g);
+      return { count: others.length, higher: others.filter((g) => g > guess).length };
     },
   };
 }
@@ -119,6 +141,26 @@ export function supabaseStore(url: string, key: string): GameStore {
         score: r.score,
         tiers: r.tiers,
       }));
+    },
+    async recordGuess(day, index, playerId, guess) {
+      await call("guesses?on_conflict=day,home_index,player_id", {
+        method: "POST",
+        body: JSON.stringify({ day, home_index: index, player_id: playerId, guess }),
+        headers: { Prefer: "resolution=ignore-duplicates,return=minimal" },
+      });
+    },
+    async crowd(day, index, guess, playerId) {
+      const base = `guesses?day=eq.${day}&home_index=eq.${index}&player_id=neq.${encodeURIComponent(playerId)}&select=guess`;
+      const count = async (filter: string) => {
+        const res = await fetch(`${rest}/${base}${filter}`, {
+          method: "HEAD",
+          headers: { ...headers, Prefer: "count=exact" },
+          cache: "no-store",
+        });
+        return Number(res.headers.get("content-range")?.split("/")[1] ?? 0);
+      };
+      const [all, higher] = await Promise.all([count(""), count(`&guess=gt.${guess}`)]);
+      return { count: all, higher };
     },
   };
   return store;

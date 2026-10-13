@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { dayNumber, isDayKey } from "@/lib/day";
+import { rankFor } from "@/lib/rank";
 import { decodeTiers } from "@/lib/share";
 import { TIER_EMOJI } from "@/lib/scoring";
 import { MAX_SCORE } from "@/lib/stats";
@@ -11,8 +12,9 @@ type Search = Promise<{ d?: string; g?: string; t?: string; s?: string }>;
 export async function generateMetadata({ searchParams }: { searchParams: Search }): Promise<Metadata> {
   const { d = "", g = "", t = "0", s = "0" } = await searchParams;
   const og = `/api/og?${new URLSearchParams({ d, g, t, s })}`;
-  const title = `${t}/${MAX_SCORE} on Guess the Price${isDayKey(d) ? ` #${dayNumber(d)}` : ""}`;
-  const description = "Guess what 5 recently sold homes went for. Can you beat it?";
+  const rank = rankFor(Math.min(MAX_SCORE, Number(t) || 0));
+  const title = `${rank.emoji} ${rank.title} · ${t} pts on Guess the Price${isDayKey(d) ? ` #${dayNumber(d)}` : ""}`;
+  const description = "5 homes that just sold. Guess the prices. Can you beat my score?";
   return {
     title,
     description,

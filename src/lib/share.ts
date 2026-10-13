@@ -1,6 +1,6 @@
 import { dayNumber } from "./day";
 import { TIER_EMOJI, type Tier } from "./scoring";
-import { MAX_SCORE } from "./stats";
+import { rankFor } from "./rank";
 
 const TIER_CODE: Record<Tier, string> = { green: "g", yellow: "y", red: "r" };
 const CODE_TIER: Record<string, Tier> = { g: "green", y: "yellow", r: "red" };
@@ -17,9 +17,12 @@ export function shareUrl(origin: string, r: ShareResult): string {
   return `${origin}/s?${q}`;
 }
 
+/** Matches the result screen: rank and score, the emoji line, the streak. */
 export function shareText(r: ShareResult): string {
+  const rank = rankFor(r.score);
   const lines = [
-    `Guess the Price #${dayNumber(r.day)} 🏠 ${r.score}/${MAX_SCORE}`,
+    `Guess the Price #${dayNumber(r.day)} 🏠`,
+    `${rank.emoji} ${rank.title} · ${r.score} pts`,
     r.tiers.map((t) => TIER_EMOJI[t]).join(""),
   ];
   if (r.streak > 1) lines.push(`🔥 ${r.streak}-day streak`);

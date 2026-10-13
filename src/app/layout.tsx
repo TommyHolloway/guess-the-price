@@ -1,6 +1,10 @@
 import type { Metadata, Viewport } from "next";
+import localFont from "next/font/local";
 import Link from "next/link";
 import "./globals.css";
+
+/** Lilita One: the game-show display face for prices, scores and buttons. */
+const display = localFont({ src: "../../assets/fonts/LilitaOne.woff2", variable: "--font-display", display: "swap" });
 
 export const metadata: Metadata = {
   title: "Guess the Price: the daily home price game",
@@ -20,7 +24,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" className={display.variable}>
       <body className="min-h-dvh">
         <header className="safe-x mx-auto flex max-w-xl items-center lg:max-w-6xl justify-between pt-[max(env(safe-area-inset-top),10px)] pb-2">
           <Link

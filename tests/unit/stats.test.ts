@@ -42,7 +42,7 @@ describe("share", () => {
       tiers: ["green", "yellow", "red", "green", "yellow"],
       streak: 3,
     });
-    expect(text).toBe("Guess the Price #2 🏠 412/500\n🟩🟨🟥🟩🟨\n🔥 3-day streak");
+    expect(text).toBe("Guess the Price #2 🏠\n🔑 Agent · 412 pts\n🟩🟨🟥🟩🟨\n🔥 3-day streak");
   });
   it("round-trips tiers and builds share links", () => {
     expect(decodeTiers(encodeTiers(["green", "red", "yellow"]))).toEqual(["green", "red", "yellow"]);
