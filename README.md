@@ -7,7 +7,7 @@ Built to be shared (Wordle-style emoji line), with streaks, stats and national/s
 
 ```bash
 npm install
-npm run dev        # http://localhost:3000
+npm run dev        # http://localhost:3001 (3000 is left free for Rove)
 npm run check      # lint + typecheck + unit tests
 ```
 
