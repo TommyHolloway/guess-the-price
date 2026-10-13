@@ -7,9 +7,11 @@ Built to be shared (Wordle-style emoji line), with streaks, stats and national/s
 
 ```bash
 npm install
-npm run dev        # http://localhost:3001 (3000 is left free for Rove)
-npm run check      # lint + typecheck + unit tests
+npm run dev
 ```
+
+Then open http://localhost:3001 (port 3000 is left free for Rove). `npm run check` runs lint, typecheck and the unit
+tests.
 
 With no environment variables it runs on **sample homes** (fictional listings in real cities, drawn placeholder
 photos) and an **in-memory store** (leaderboards reset with the server).
