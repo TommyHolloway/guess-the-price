@@ -41,3 +41,10 @@ export function playerId(): string {
   }
   return id;
 }
+
+/** Forgets one day's play (development only: lets the game be replayed). */
+export function clearDayPlay(day: string) {
+  const h = loadHistory();
+  delete h[day];
+  write(HISTORY, h);
+}

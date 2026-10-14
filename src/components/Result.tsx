@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import type { PublicHome } from "@/lib/homes";
-import { loadHistory, loadPrefs, playerId, savePrefs } from "@/lib/client/storage";
+import { clearDayPlay, loadHistory, loadPrefs, playerId, savePrefs } from "@/lib/client/storage";
 import { buzz, play } from "@/lib/client/sound";
 import { isStreakMilestone, nextRank, rankFor } from "@/lib/rank";
 import { formatPrice, TIER_EMOJI, type Tier } from "@/lib/scoring";
@@ -121,6 +121,18 @@ export default function Result({
           </Link>
         </p>
         <AdSlot id="final" />
+        {process.env.NODE_ENV === "development" && (
+          <button
+            onClick={() => {
+              clearDayPlay(day);
+              window.location.reload();
+            }}
+            className="btn-toy w-full border-2 border-dashed border-white/50 bg-white/10 py-2.5 text-white"
+            data-testid="dev-replay"
+          >
+            ↺ Replay today (dev only)
+          </button>
+        )}
       </div>
     </div>
   );
